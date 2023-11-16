@@ -25,7 +25,18 @@ class User {
 
   /** Authenticate: is this username/password valid? Returns boolean. */
 
-  static async authenticate(username, password) { }
+  static async authenticate(username, password) { 
+    const r = await db.query(`SELECT username, password, first_name, last_name, phone
+                          FROM users WHERE username=$1`,[username])
+    const user = r.rows[0] ? r.rows[0] : undefined
+    if(user){
+      if(await bcrypt.compare(password,user.password)){
+        return true
+      }
+    }
+    return false
+    
+  }
 
   /** Update last_login_at for user */
 
