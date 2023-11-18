@@ -85,14 +85,31 @@ class User {
    */
 
   static async messagesFrom(username) { 
-    const results = await db.query(`SELECT m.id, m.to_username AS to_user, m.body, m.sent_at, m.read_at
-                                    FROM messages AS m
-                                    LEFT JOIN users AS u
-                                    ON m.from_username = u.username
-                                    WHERE u.username = $1`, [username])
-
-     const messages = results.rows
-     return messages                               
+    const results= await db.query(`SELECT m.id,
+                                  m.to_username AS username,
+                                  t.first_name AS first_name,
+                                  t.last_name AS last_name,
+                                  t.phone AS phone,
+                                  m.body,
+                                  m.sent_at,
+                                  m.read_at
+                                  FROM messages AS m
+                                  JOIN users AS t ON m.to_username = t.username
+                                  WHERE m.from_username = $1`, [username])
+      return results.rows.map(m=>{
+        return{
+          id: m.id,
+          body: m.body,
+          sent_at: m.sent_at,
+          read_at: m.read_at,
+          to_user: {
+            username: m.username,
+            first_name: m.first_name,
+            last_name: m.last_name,
+            phone: m.phone
+          }
+        }
+    })                             
   }
 
   /** Return messages to this user.
@@ -104,15 +121,32 @@ class User {
    */
 
   static async messagesTo(username) {
-    const results = await db.query(`SELECT m.id, m.from_username AS from_user, m.body, m.sent_at, m.read_at
+    const results = await db.query(`SELECT m.id,
+                                    m.from_username AS username,
+                                    f.first_name AS first_name,
+                                    f.last_name AS last_name,
+                                    f.phone AS phone,
+                                    m.body,
+                                    m.sent_at,
+                                    m.read_at
                                     FROM messages AS m
-                                    LEFT JOIN users AS u
-                                    ON m.to_username = u.username
-                                    WHERE u.username = $1`, [username])
-
-     const messages = results.rows
-     return messages     
-   }
+                                    JOIN users AS f ON m.from_username = f.username
+                                    WHERE m.to_username = $1`, [username])
+    return results.rows.map(m=>{
+        return{
+          id: m.id,
+          body: m.body,
+          sent_at: m.sent_at,
+          read_at: m.read_at,
+          from_user: {
+            username: m.username,
+            first_name: m.first_name,
+            last_name: m.last_name,
+            phone: m.phone
+          }
+        }
+    })
+  }
 }
 
 
