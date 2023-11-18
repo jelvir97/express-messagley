@@ -20,6 +20,7 @@ class User {
                                   VALUES ($1,$2,$3,$4,$5,$6)
                                   RETURNING username, password, first_name, last_name, phone
                                 `,[username,hashPass,first_name,last_name,phone,joinAt])
+    await User.updateLoginTimestamp(username)
     return result.rows[0]
    }
 
@@ -31,6 +32,7 @@ class User {
     const user = r.rows[0] ? r.rows[0] : undefined
     if(user){
       if(await bcrypt.compare(password,user.password)){
+        await User.updateLoginTimestamp(username)
         return true
       }
     }
