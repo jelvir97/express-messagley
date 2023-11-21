@@ -58,4 +58,15 @@ router.post('/', ensureLoggedIn ,async function(req,res,next){
  *
  **/
 
+router.post('/:id/read',ensureLoggedIn,async(req,res,next)=>{
+    try{
+        const msg = await Message.get(req.params.id)
+        if(req.user.username !== msg.to_user.username) throw new ExpressError('Unauthorized', 401)
+        const message = await Message.markRead(req.params.id)
+        return res.json({message})
+    }catch(e){
+        next(e)
+    }
+})
+
 module.exports = router
