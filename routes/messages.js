@@ -20,8 +20,10 @@ const ExpressError = require('../expressError')
 
 router.get('/:id', ensureLoggedIn, async (req,res,next)=>{
     try{
+        const user = req.user.username
         const message = await Message.get(req.params.id)
-        return res.json({message})
+        if(user==message.from_user.username || user==message.to_user.username) return res.json({message})
+        throw new ExpressError('Unauthorized',401)
     }catch(e){
         next(e)
     }
