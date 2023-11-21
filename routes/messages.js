@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const Message = require('../models/message')
 const {ensureLoggedIn} = require('../middleware/auth')
-const {SECRET_KEY} = require('../config')
 const ExpressError = require('../expressError')
 
 /** GET /:id - get detail of message.
