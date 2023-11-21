@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
-const {ensureLoggedIn} = require('../middleware/auth')
+const {ensureLoggedIn,ensureCorrectUser} = require('../middleware/auth')
 const ExpressError = require('../expressError')
 
 /** GET / - get list of users.
@@ -33,7 +33,7 @@ router.get('/:username', ensureLoggedIn, async(req,res,next)=>{
 
         return res.json({user})
     }catch(e){
-        
+        next(e)
     }
 } )
 
@@ -47,6 +47,16 @@ router.get('/:username', ensureLoggedIn, async(req,res,next)=>{
  *                 from_user: {username, first_name, last_name, phone}}, ...]}
  *
  **/
+
+router.get('/:username/to', ensureLoggedIn,ensureCorrectUser, async(req,res,next)=>{
+    try{
+        const {username} = req.params
+        const messages = await User.messagesTo(username)
+        return res.json({messages})
+    }catch(e){
+        next(e)
+    }
+})
 
 
 /** GET /:username/from - get messages from user
