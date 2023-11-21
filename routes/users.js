@@ -10,7 +10,7 @@ const ExpressError = require('../expressError')
  *
  **/
 
-router.get('/', async(req,res,next)=>{
+router.get('/', ensureLoggedIn,async(req,res,next)=>{
     try{
         const users = await User.all()
         return res.json({users})
@@ -25,6 +25,17 @@ router.get('/', async(req,res,next)=>{
  * => {user: {username, first_name, last_name, phone, join_at, last_login_at}}
  *
  **/
+
+router.get('/:username', ensureLoggedIn, async(req,res,next)=>{
+    try{
+        const {username} = req.params
+        const user = await User.get(username)
+
+        return res.json({user})
+    }catch(e){
+        
+    }
+} )
 
 
 /** GET /:username/to - get messages to user
