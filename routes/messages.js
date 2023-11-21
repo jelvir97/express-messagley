@@ -1,3 +1,10 @@
+const express = require('express')
+const router = express.Router()
+const Message = require('../models/message')
+const jwt = require('jsonwebtoken')
+const {SECRET_KEY} = require('../config')
+const ExpressError = require('../expressError')
+
 /** GET /:id - get detail of message.
  *
  * => {message: {id,
@@ -11,6 +18,15 @@
  *
  **/
 
+
+router.get('/:id', async (req,res,next)=>{
+    try{
+        const message = await Message.get(req.params.id)
+        return res.json({message})
+    }catch(e){
+        next(e)
+    }
+})
 
 /** POST / - post message.
  *
@@ -28,3 +44,4 @@
  *
  **/
 
+module.exports = router
