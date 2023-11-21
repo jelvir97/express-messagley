@@ -9,15 +9,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.6.2",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
-    "dotenv": "^6.1.0",
+    "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "express-cors": "0.0.3",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.3.3",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "twilio": "^4.19.0"
   },
   "keywords": [],
   "description": ""
