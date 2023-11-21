@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Message = require('../models/message')
-const jwt = require('jsonwebtoken')
+const {ensureLoggedIn} = require('../middleware/auth')
 const {SECRET_KEY} = require('../config')
 const ExpressError = require('../expressError')
 
@@ -19,7 +19,7 @@ const ExpressError = require('../expressError')
  **/
 
 
-router.get('/:id', async (req,res,next)=>{
+router.get('/:id', ensureLoggedIn, async (req,res,next)=>{
     try{
         const message = await Message.get(req.params.id)
         return res.json({message})
@@ -34,6 +34,20 @@ router.get('/:id', async (req,res,next)=>{
  *   {message: {id, from_username, to_username, body, sent_at}}
  *
  **/
+
+router.post('/', ensureLoggedIn ,async function(req,res,next){
+    try{
+        const {to_username,body,} = req.body
+        const from_username = req.user.username
+        console.log(from_username)
+        const message = await Message.create({from_username,to_username,body})
+
+        return res.json({message})
+
+    }catch(e){
+        next(e)
+    }
+})
 
 
 /** POST/:id/read - mark message as read:
